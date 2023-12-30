@@ -1,0 +1,19 @@
+repo_name: FinzyPHINZY/University-of-Helsinki---Full-Stack-Open
+report_id: 03eee5210ff6df05597b3f948934cfa0
+version: 0.1
+repo_type: Public
+timestamp: '2023-12-30T06:10:45+00:00'
+requested_by: FinzyPHINZY
+provider: github
+branch: main
+detected_tools_count: 1
+tools:
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source: Repo Metadata
