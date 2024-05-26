@@ -11,10 +11,8 @@ This repository contains the assignments and exercises for the University of Hel
   - Unicafe
   - Anecdotes
 - Part 2
-  - Rendering a Collection, Modules
-  - Forms
-  - Getting Data from Server
-  - Altering Data in Server
-  - Adding Styles to React App
+  - Course Information
+  - Phonebook
+  - Country Information
 
 ```
