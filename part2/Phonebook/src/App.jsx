@@ -3,12 +3,7 @@ import Filter from "./Components/Filter";
 import PersonForm from "./Components/PersonForm";
 import Persons from "./Components/Persons";
 import PersonsService from "./services/persons";
-
-// Change the functionality so that if a number is added to an already existing person, the added number replaces the previous number. The replacement should be done with an HTTP PUT request.
-
-// if number is added to existing person. --- if person.name === newName ==> accept adding new name but edit the number with a put request.
-
-// If the person's information is already in the list, the program can ask the user for confirmation:
+import NotificationMessage from "./Components/NotificationMessage";
 
 const App = () => {
   // States
@@ -23,15 +18,17 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterStr, setFilterStr] = useState("");
   const [filterArr, setFilterArr] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [notifStatus, setNotifStatus] = useState("");
 
   useEffect(() => {
-    console.log("effect");
+    // console.log("effect");
     PersonsService.getAll()
       .then((res) => {
         const persons = res.data;
         setPersons(persons);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => setErrorMessage("Failed to load contacts"));
   }, []);
 
   // Handle changes in NAME input
@@ -73,13 +70,15 @@ const App = () => {
                 person.id !== existingContact.id ? person : updatedPerson.data
               )
             );
+            setErrorMessage(`Updated ${changedPerson.name} successfully`);
+            setNotifStatus("success");
           })
-          .catch(
-            (error) => (
-              alert(`Error updating ${existingContact.name}`),
-              console.error(error.message)
-            )
-          );
+          .catch(() => {
+            setErrorMessage(
+              `Information of ${changedPerson.name} has already been removed from server`
+            );
+            setNotifStatus("error");
+          });
       }
     } else {
       PersonsService.create(newContact)
@@ -88,8 +87,13 @@ const App = () => {
           console.log(response);
           console.log("successfully added new contact");
           setNewName(""), setNewNumber("");
+          setErrorMessage(`Added ${newContact.name} successfully`);
+          setNotifStatus("success");
         })
-        .catch((error) => console.error("Error adding contact:", error));
+        .catch(() => {
+          setErrorMessage("Failed to add new contact");
+          setNotifStatus("error");
+        });
     }
   };
 
@@ -101,11 +105,13 @@ const App = () => {
       PersonsService.remove(id)
         .then(() => {
           setPersons(persons.filter((person) => person.id !== id));
-          console.log(`Deleted contact: ${person.name}`);
+          setErrorMessage(`Deleted ${person.name} successfully`);
+          setNotifStatus("success");
         })
 
         .catch((error) => {
-          console.error(`Error deleting ${person.name}`, error);
+          setErrorMessage("Failed to delete contact");
+          setNotifStatus("error");
         });
   };
 
@@ -129,6 +135,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <NotificationMessage message={errorMessage} status={notifStatus} />
 
       {/* Search for contact */}
       <Filter
