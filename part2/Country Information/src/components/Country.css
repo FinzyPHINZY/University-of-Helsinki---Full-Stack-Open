@@ -1,0 +1,15 @@
+h1 {
+  text-align: center;
+}
+
+.country__info {
+  padding: 1rem 0.5rem;
+}
+
+.country__info > * {
+  margin-bottom: 1rem;
+}
+
+.country__flag {
+  width: 100%;
+}
