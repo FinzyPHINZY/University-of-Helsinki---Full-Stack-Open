@@ -10,7 +10,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Get country data from API using axios. Set countries state to contain data recieved and changed loading state to false to show data has been completely collected
   useEffect(() => {
     CountryServices.getAllCountries()
       .then((res) => {
@@ -23,41 +22,33 @@ function App() {
       });
   }, []);
 
-  // Event listener: Monitor changes in controlled component (input) and set search value to be used in finding countries. Disable country rendering while user is typing.
   const handleChange = (e) => {
     setSearchValue(e.target.value);
     setShowCountry(null);
   };
 
-  // Event listener: Enable country data to be rendered after the show button has been clicked. Takes in an argument which is the country selected
   const revealCountry = (country) => {
     setShowCountry(country);
   };
 
   const getFilteredCountries = () => {
-    return (
-      countries
-        .sort((a, b) => a.name.common.localeCompare(b.name.common))
+    return countries
+      .sort((a, b) => a.name.common.localeCompare(b.name.common))
 
-        // This was done so that users will always get country matches without having to know how to spell the country name correctly or  the country name first letters. Just like when a user remembers certain letters. but not the whole thing. Filtering this way will return the country
-        .filter((country) =>
-          country.name.common.toLowerCase().includes(searchValue.toLowerCase())
-        )
-    );
+      .filter((country) =>
+        country.name.common.toLowerCase().includes(searchValue.toLowerCase())
+      );
   };
 
   const renderOutput = () => {
-    // users will know the app is not ready for use (yet to recieve the request response)
     if (loading) {
       return <p>Loading...</p>;
     }
 
-    // lets users know if there's any error while fetching the countries
     if (error) {
       return <p>Error fetching countries: {error.message}</p>;
     }
 
-    // Render a country if showCountry is true. this is after the revealCountry function has been triggered by the user through the show button
     if (showCountry) {
       return <Country country={showCountry} />;
     }
