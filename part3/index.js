@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const persons = [
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -41,8 +41,11 @@ morgan.token("method", (req) => req.method);
 morgan.token("url", (req) => req.url);
 
 morgan.token("status", (req, res) => res.statusCode);
-const customFormat = ":method :url :status :response-time ms - :req-body";
+const customFormat =
+  ":method :url :status :res[content-length] :response-time ms - :req-body";
 app.use(morgan(customFormat));
+
+app.use(express.static("dist"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -85,6 +88,10 @@ app.get("/api/persons/:id", (req, res) => {
   }
 });
 
+const generateId = () => {
+  return persons.length > 0 ? Math.floor(Math.random() * 1000) : 0;
+};
+
 // Desc      Add new Contact
 // Route     POST http://localhost:3001/api/persons
 app.post("/api/persons", (req, res) => {
@@ -105,21 +112,27 @@ app.post("/api/persons", (req, res) => {
     return res.status(409).json({ error: "name must be unique" });
   }
 
-  const id = Math.floor(Math.random() * 1000);
-  person.id = id;
+  person.id = generateId();
 
-  persons.push(person);
+  persons = persons.concat(person);
   console.log(persons);
 
-  res.status(200).json(person);
+  res.status(201).json(persons);
 });
 
 // Desc      Delete Person
 // Route     DELETE http://localhost:3001/api/persons/5
 app.delete("/api/persons/:id", (req, res) => {
   const { id } = req.params;
-  notes = notes.filter((note) => note.id !== Number(id));
-  res.status(204).end();
+  const personIndex = persons.findIndex((person) => person.id === Number(id));
+
+  if (personIndex !== -1) {
+    persons = persons.filter((person) => person.id !== Number(id));
+
+    res.status(204).end();
+  } else {
+    res.status(404).json({ error: "Person not found" });
+  }
 });
 
 const unknownEndpoint = (req, res) => {
