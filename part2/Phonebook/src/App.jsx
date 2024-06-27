@@ -7,12 +7,7 @@ import NotificationMessage from "./Components/NotificationMessage";
 
 const App = () => {
   // States
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-1231244" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState([]);
 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -83,12 +78,19 @@ const App = () => {
     } else {
       PersonsService.create(newContact)
         .then((response) => {
-          setPersons(persons.concat(response.data));
+          // setPersons(persons.concat(response.data));
           console.log(response);
           console.log("successfully added new contact");
-          setNewName(""), setNewNumber("");
+          setNewName("");
+          setNewNumber("");
           setErrorMessage(`Added ${newContact.name} successfully`);
           setNotifStatus("success");
+          PersonsService.getAll()
+            .then((res) => {
+              const persons = res.data;
+              setPersons(persons);
+            })
+            .catch((err) => setErrorMessage("Failed to load contacts"));
         })
         .catch(() => {
           setErrorMessage("Failed to add new contact");
