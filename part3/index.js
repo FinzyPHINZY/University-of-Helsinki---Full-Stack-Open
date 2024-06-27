@@ -4,11 +4,23 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(
-  cors({
-    origin: "https://phonebook-backend-iuhk.onrender.com/",
-  })
-);
+const allowedOrigins = [
+  "http://localhost:3001",
+  "https://phonebook-backend-iuhk.onrender.com",
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
+
 let persons = [
   {
     id: 1,
