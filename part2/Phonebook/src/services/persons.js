@@ -1,7 +1,7 @@
 import axios from "axios";
-const baseUrl = "http://localhost:3001/api/persons";
+// const baseUrl = "http://localhost:3001/api/persons";
 
-// const baseUrl = "https://phonebook-backend-iuhk.onrender.com";
+const baseUrl = "https://phonebook-backend-iuhk.onrender.com";
 const getAll = () => {
   return axios.get(baseUrl);
 };
