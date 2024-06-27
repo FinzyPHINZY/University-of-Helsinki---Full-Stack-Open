@@ -4,6 +4,11 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+app.use(
+  cors({
+    origin: "https://phonebook-backend-iuhk.onrender.com/",
+  })
+);
 let persons = [
   {
     id: 1,
@@ -44,7 +49,7 @@ app.set("trust proxy", true);
 app.use(morgan(customFormat));
 
 app.use(express.static("dist"));
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
