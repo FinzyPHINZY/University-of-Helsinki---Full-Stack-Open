@@ -25,11 +25,6 @@ let persons = [
     name: "Marie Poppendick",
     number: "39-23-6423122",
   },
-  {
-    id: 5,
-    name: "Boluwatife Adeyemi",
-    number: "234-816-781-7217",
-  },
 ];
 
 morgan.token("req-body", (req) => {
@@ -43,6 +38,9 @@ morgan.token("url", (req) => req.url);
 morgan.token("status", (req, res) => res.statusCode);
 const customFormat =
   ":method :url :status :res[content-length] :response-time ms - :req-body";
+
+app.set("trust proxy", true);
+
 app.use(morgan(customFormat));
 
 app.use(express.static("dist"));
@@ -89,14 +87,16 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 const generateId = () => {
-  return persons.length > 0 ? Math.floor(Math.random() * 1000) : 0;
+  const maxId =
+    persons.length > 0 ? Math.max(...persons.map((person) => person.id)) : 0;
+  return maxId + 1;
 };
 
 // Desc      Add new Contact
 // Route     POST http://localhost:3001/api/persons
 app.post("/api/persons", (req, res) => {
   const person = req.body;
-
+  console.log(person);
   if (!person.name) {
     res.status(400).json({
       error: "name is missing",
@@ -129,7 +129,7 @@ app.delete("/api/persons/:id", (req, res) => {
   if (personIndex !== -1) {
     persons = persons.filter((person) => person.id !== Number(id));
 
-    res.status(204).end();
+    res.status(204).send(persons);
   } else {
     res.status(404).json({ error: "Person not found" });
   }
