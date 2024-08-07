@@ -1,25 +1,15 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3001;
+const connectDB = require("./config/mongo.js");
+const Contact = require("./contacts.js");
 
-const allowedOrigins = [
-  "http://localhost:3001",
-  "https://phonebook-backend-iuhk.onrender.com",
-];
+connectDB();
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 let persons = [
   {
@@ -47,11 +37,8 @@ let persons = [
 morgan.token("req-body", (req) => {
   return req.method === "POST" ? JSON.stringify(req.body) : "";
 });
-
 morgan.token("method", (req) => req.method);
-
 morgan.token("url", (req) => req.url);
-
 morgan.token("status", (req, res) => res.statusCode);
 const customFormat =
   ":method :url :status :res[content-length] :response-time ms - :req-body";
@@ -67,39 +54,67 @@ app.use(express.urlencoded({ extended: false }));
 
 // Desc      Home Page
 // Route     GET http://localhost:3001/
-app.get("/", (req, res) => {
-  res.send("Your PHoneBook");
+app.get("/", (req, res, next) => {
+  try {
+    res.send("Your PhoneBook");
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Desc      Phonebook Information
 // Route     GET http://localhost:3001/info/
-app.get("/info", (req, res) => {
-  const date = new Date();
+app.get("/info", (req, res, next) => {
+  try {
+    const date = new Date();
 
-  res.send(
-    `<div>
+    res.send(
+      `<div>
         <p>Phonebook has info for ${persons.length} people</p>
          <p>${date.toString()}</p> 
       </div>`
-  );
+    );
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Desc      Phonebook Contacts
 // Route     GET http://localhost:3001/api/persons/
-app.get("/api/persons", (req, res) => {
-  res.json(persons);
+app.get("/api/persons", (req, res, next) => {
+  try {
+    Contact.find({})
+      .then((data) => {
+        res.json(data);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.send(err);
+      });
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Desc      Person Contact
 // Route     GET http://localhost:3001/api/persons/5
-app.get("/api/persons/:id", (req, res) => {
-  const { id } = req.params;
-  const person = persons.find((person) => person.id === Number(id));
-
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).end();
+app.get("/api/persons/:id", (req, res, next) => {
+  try {
+    const { id } = req.params;
+    Contact.findById(id)
+      .then((person) => {
+        if (person) {
+          res.json(person);
+        } else {
+          res.status(404).end();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        response.status(400).send({ error: "malformatted id" });
+      });
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -111,45 +126,78 @@ const generateId = () => {
 
 // Desc      Add new Contact
 // Route     POST http://localhost:3001/api/persons
-app.post("/api/persons", (req, res) => {
-  const person = req.body;
-  console.log(person);
-  if (!person.name) {
+app.post("/api/persons", (req, res, next) => {
+  try {
+    const { name, number } = req.body;
+    if (!name) {
+      res.status(400).json({
+        error: "name is missing",
+      });
+    } else if (!number) {
+      res.status(400).json({
+        error: "number is missing",
+      });
+    }
+
+    const contact = new Contact({
+      name,
+      number,
+    });
+
+    contact
+      .save()
+      .then(() => console.log("Contact saved successfully"))
+      .catch((err) => next(err));
+
+    console.log(contact);
+
+    res.status(201).json(contact);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Desc      Update Contact
+// Route     PUT http://localhost:3001/api/persons:id
+app.put("/api/persons/:id", (request, response, next) => {
+  const { name, number } = request.body;
+  const { id } = request.params;
+
+  if (!name) {
     res.status(400).json({
       error: "name is missing",
     });
-  } else if (!person.number) {
+  } else if (!number) {
     res.status(400).json({
       error: "number is missing",
     });
   }
 
-  const nameExists = persons.find((contact) => contact.name === person.name);
-  if (nameExists) {
-    return res.status(409).json({ error: "name must be unique" });
-  }
+  const contact = {
+    name,
+    number,
+  };
 
-  person.id = generateId();
-
-  persons = persons.concat(person);
-  console.log(persons);
-
-  res.status(201).json(persons);
+  Contact.findByIdAndUpdate(id, contact, { new: true, runValidators: true })
+    .then((contact) => {
+      response.json(contact);
+    })
+    .catch((error) => {
+      next(error);
+      console.error(error);
+    });
 });
 
-// Desc      Delete Person
+// Desc      Delete Personnotes
 // Route     DELETE http://localhost:3001/api/persons/5
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
   const { id } = req.params;
-  const personIndex = persons.findIndex((person) => person.id === Number(id));
 
-  if (personIndex !== -1) {
-    persons = persons.filter((person) => person.id !== Number(id));
-
-    res.status(204).send(persons);
-  } else {
-    res.status(404).json({ error: "Person not found" });
-  }
+  Contact.findByIdAndDelete(id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 const unknownEndpoint = (req, res) => {
@@ -157,6 +205,20 @@ const unknownEndpoint = (req, res) => {
 };
 
 app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(

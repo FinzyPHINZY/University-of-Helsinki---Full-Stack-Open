@@ -41,6 +41,10 @@ const App = () => {
     e.preventDefault();
     const newContact = { name: newName, number: newNumber };
 
+    if (newContact.name.length < 3) {
+      throw new Error("Contact name must be at least 3 characters");
+    }
+
     // Check if newContact exists
     const isContactExisting = persons.some(
       (person) => person.name === newContact.name
@@ -59,16 +63,18 @@ const App = () => {
         const changedPerson = { ...existingContact, number: newContact.number };
 
         PersonsService.update(existingContact.id, changedPerson)
-          .then((updatedPerson) => {
-            setPersons(
-              persons.map((person) =>
-                person.id !== existingContact.id ? person : updatedPerson.data
-              )
-            );
+          .then(() => {
+            PersonsService.getAll()
+              .then((res) => {
+                const persons = res.data;
+                setPersons(persons);
+              })
+              .catch((err) => setErrorMessage("Failed to load contacts"));
             setErrorMessage(`Updated ${changedPerson.name} successfully`);
             setNotifStatus("success");
           })
-          .catch(() => {
+          .catch((error) => {
+            console.log(error.response.data);
             setErrorMessage(
               `Information of ${changedPerson.name} has already been removed from server`
             );
@@ -90,9 +96,13 @@ const App = () => {
               const persons = res.data;
               setPersons(persons);
             })
-            .catch((err) => setErrorMessage("Failed to load contacts"));
+            .catch((err) => {
+              setErrorMessage("Failed to load contacts");
+              console.log(err.response.data);
+            });
         })
         .catch(() => {
+          console.log(error.response.data);
           setErrorMessage("Failed to add new contact");
           setNotifStatus("error");
         });
