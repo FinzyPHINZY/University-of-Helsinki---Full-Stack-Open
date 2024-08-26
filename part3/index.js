@@ -126,7 +126,7 @@ const generateId = () => {
 
 // Desc      Add new Contact
 // Route     POST http://localhost:3001/api/persons
-app.post("/api/persons", (req, res, next) => {
+app.post("/api/persons", async (req, res, next) => {
   try {
     const { name, number } = req.body;
     if (!name) {
@@ -144,14 +144,14 @@ app.post("/api/persons", (req, res, next) => {
       number,
     });
 
-    contact
-      .save()
-      .then(() => console.log("Contact saved successfully"))
-      .catch((err) => next(err));
+    try {
+      const savedContact = await contact.save();
 
-    console.log(contact);
-
-    res.status(201).json(contact);
+      res.status(201).json(savedContact);
+    } catch (error) {
+      next(error);
+      res.status(400).json({ success: false, error });
+    }
   } catch (error) {
     next(error);
   }
@@ -210,9 +210,9 @@ const errorHandler = (error, req, res, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+    return res.status(400).send({ error: "malformatted id" });
   } else if (error.name === "ValidationError") {
-    return response.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message });
   }
 
   next(error);

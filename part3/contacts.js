@@ -5,11 +5,17 @@ const contactSchema = new mongoose.Schema({
   name: {
     type: String,
     minlength: 3,
-    required: true,
+    required: [true, "Contact name is required"],
   },
   number: {
     type: String,
-    required: true,
+    required: [true, "Contact phone number is required"],
+    validate: {
+      validator: function (value) {
+        return /^(\d{2}-\d+|\d{3}-\d+)$/.test(value);
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
   },
 });
 

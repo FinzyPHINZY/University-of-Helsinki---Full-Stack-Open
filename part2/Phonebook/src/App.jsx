@@ -42,7 +42,12 @@ const App = () => {
     const newContact = { name: newName, number: newNumber };
 
     if (newContact.name.length < 3) {
-      throw new Error("Contact name must be at least 3 characters");
+      setErrorMessage(
+        `Contact validation failed: name: Path name ("${newContact.name}") is shorter than the minimum allowed length (3).`
+      );
+      setNotifStatus("error");
+      return;
+      // throw new Error("Contact name must be at least 3 characters");
     }
 
     // Check if newContact exists
@@ -85,7 +90,7 @@ const App = () => {
       PersonsService.create(newContact)
         .then((response) => {
           // setPersons(persons.concat(response.data));
-          console.log(response);
+          console.log(response.data);
           console.log("successfully added new contact");
           setNewName("");
           setNewNumber("");
@@ -97,13 +102,17 @@ const App = () => {
               setPersons(persons);
             })
             .catch((err) => {
-              setErrorMessage("Failed to load contacts");
-              console.log(err.response.data);
+              setErrorMessage(
+                "Failed to load contacts: ",
+                err.response.data.error
+              );
+              console.log("Error: ", err.response.data);
             });
         })
-        .catch(() => {
-          console.log(error.response.data);
-          setErrorMessage("Failed to add new contact");
+        .catch((error) => {
+          // Handle error from the create request
+          console.log("Errorrr: ", error.response.data.error);
+          setErrorMessage(`${error.response.data.error}`); // Display the error message in the UI
           setNotifStatus("error");
         });
     }
