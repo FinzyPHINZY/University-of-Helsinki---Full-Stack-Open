@@ -1,9 +1,0 @@
-{
-  "version": "1",
-  "name": "FullStack_Open",
-  "type": "collection",
-  "ignore": [
-    "node_modules",
-    ".git"
-  ]
-}
