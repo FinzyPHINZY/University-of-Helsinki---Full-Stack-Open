@@ -121,6 +121,42 @@ describe('when fetching blogs', () => {
   })
 })
 
+describe('when updating a blog', async () => {
+  const blogs = await api.get('/api/blogs')
+
+  test('update the title of the blog', async () => {
+    const blogToUpdate = blogs.body[0]
+    blogToUpdate.title = 'Setting up Supabase with the Prisma ORM'
+    console.log(blogToUpdate)
+
+    // ============================
+    const updatedResponse = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blogToUpdate)
+    console.log('updatedResponse: ', updatedResponse.body)
+    assert.strictEqual(updatedResponse.body[0].title, blogToUpdate.title)
+  })
+})
+
+describe('when deleting a blog', async () => {
+  const blogs = await api.get('/api/blogs')
+
+  const blogToDelete = blogs.body[0]
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`)
+
+  const response = await api.get('/api/blogs')
+
+  test('should blogToDelete title should not be found in titles array', async () => {
+    const titles = response.body.map((blog) => blog.title)
+    assert.ok(!titles.includes(blogToDelete.title))
+  })
+
+  test('Blogs length should be equal to 3', () => {
+    assert.strictEqual(response.body.length, blogs.body.length - 1)
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
