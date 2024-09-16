@@ -4,10 +4,10 @@
   "description": "Once we make the changes to the directory structure of our project, we will end up with the following structure:",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "dev": "node index.js",
-    "lint": "eslint.",
-    "test": "node --test"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "test": "cross-env  NODE_ENV=test node --test",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "lint": "eslint."
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
     "lodash": "^4.17.21",
     "mongoose": "^8.6.0",
     "morgan": "^1.10.0"
@@ -23,8 +24,10 @@
   "devDependencies": {
     "@eslint/js": "^9.9.1",
     "@stylistic/eslint-plugin-js": "^2.7.1",
+    "cross-env": "^7.0.3",
     "eslint": "^9.9.1",
     "globals": "^15.9.0",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
   }
 }
