@@ -120,24 +120,24 @@ describe('when fetching blogs', () => {
   })
 })
 
-// describe('when updating a blog', async () => {
-//   const blogs = await blogsInDb()
+describe('when updating a blog', async () => {
+  const blogs = await blogsInDb()
 
-//   test('update the title of the blog', async () => {
-//     const blogToUpdate = blogs[0]
+  test('update the title of the blog', async () => {
+    const blogToUpdate = blogs[0]
 
-//     blogToUpdate.title =
-//       'The Common Sense Guide to Data Structures and Algorithms'
+    blogToUpdate.title =
+      'The Common Sense Guide to Data Structures and Algorithms'
 
-//     const updatedResponse = await api
-//       .put(`/api/blogs/${blogToUpdate.id}`)
-//       .send(blogToUpdate)
-//       .expect('Content-Type', /application\/json/)
-//       .expect(200) // Expecting 200 OK status code
+    const updatedResponse = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blogToUpdate)
+      .expect('Content-Type', /application\/json/)
+      .expect(200) // Expecting 200 OK status code
 
-//     assert.strictEqual(updatedResponse.body.title, blogToUpdate.title)
-//   })
-// })
+    assert.strictEqual(updatedResponse.body.title, blogToUpdate.title)
+  })
+})
 
 describe('when deleting a blog', async () => {
   const blogs = await blogsInDb()
