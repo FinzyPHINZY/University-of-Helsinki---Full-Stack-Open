@@ -26,11 +26,13 @@ blogRouter.post('/', async (request, response) => {
 })
 
 blogRouter.put('/:id', async (request, response) => {
-  const updatedBlog = await Blog.findByIdAndUpdate(
-    request.params.id,
-    request.body,
-    { new: true }
-  )
+  const { id } = request.params
+
+  const updatedBlog = await Blog.findByIdAndUpdate(id, request.body, {
+    new: true,
+  })
+
+  console.log('UPDATED BLOG: ', updatedBlog)
 
   if (updatedBlog) {
     response.json(updatedBlog) // Return the updated blog

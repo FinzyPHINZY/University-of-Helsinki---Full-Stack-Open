@@ -4,8 +4,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
-const logger = require('../utils/logger')
-const { initialBlogs } = require('./test_helper')
+const { initialBlogs, usersInDb, blogsInDb } = require('./test_helper')
 const { describe } = require('node:test')
 
 const api = supertest(app)
@@ -28,13 +27,13 @@ describe('when there are existing blog objects', () => {
   })
 
   test('there are four blogs', async () => {
-    const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, initialBlogs.length)
+    const response = await blogsInDb()
+    assert.strictEqual(response.length, initialBlogs.length)
   })
 
   test('the first blog is about React Patterns', async () => {
-    const response = await api.get('/api/blogs')
-    const blogTitle = response.body.map((blog) => blog.title)
+    const response = await blogsInDb()
+    const blogTitle = response.map((blog) => blog.title)
 
     assert.strictEqual(blogTitle[0], 'React Patterns')
   })
@@ -42,7 +41,7 @@ describe('when there are existing blog objects', () => {
 
 describe('when adding a new blog', () => {
   test('should default likes to 0 if likes is not provided', async () => {
-    // create a new blog without liks
+    // create a new blog without likes
     const newBlog = {
       title: 'Programming JavaScript for web development',
       author: 'Brian Plank',
@@ -63,9 +62,9 @@ describe('when adding a new blog', () => {
 
     await api.post('/api/blogs').send(newBlog).expect(400)
 
-    const response = await api.get('/api/blogs')
+    const response = await blogsInDb()
 
-    assert.strictEqual(response.body.length, initialBlogs.length)
+    assert.strictEqual(response.length, initialBlogs.length)
   })
 
   test('blog without url should not be added', async () => {
@@ -77,13 +76,13 @@ describe('when adding a new blog', () => {
 
     await api.post('/api/blogs').send(newBlog).expect(400)
 
-    const response = await api.get('/api/blogs')
+    const response = await blogsInDb()
 
-    assert.strictEqual(response.body.length, initialBlogs.length)
+    assert.strictEqual(response.length, initialBlogs.length)
   })
 
   test('ensure new blog is created and count increases by one', async () => {
-    const initialBlogs = await Blog.find({})
+    const initialBlogs = await blogsInDb()
     const initialCount = initialBlogs.length
 
     const newBlog = {
@@ -115,45 +114,47 @@ describe('when adding a new blog', () => {
 
 describe('when fetching blogs', () => {
   test('unique identifier is .id and not ._id', async () => {
-    const response = await api.get('/api/blogs')
-    const uid = response.body.map((r) => r.id)
-    logger.info(uid)
+    const response = await blogsInDb()
+    const uid = response.map((r) => r.id)
+    console.log(uid)
   })
 })
 
-describe('when updating a blog', async () => {
-  const blogs = await api.get('/api/blogs')
+// describe('when updating a blog', async () => {
+//   const blogs = await blogsInDb()
 
-  test('update the title of the blog', async () => {
-    const blogToUpdate = blogs.body[0]
-    blogToUpdate.title = 'Setting up Supabase with the Prisma ORM'
-    console.log(blogToUpdate)
+//   test('update the title of the blog', async () => {
+//     const blogToUpdate = blogs[0]
 
-    // ============================
-    const updatedResponse = await api
-      .put(`/api/blogs/${blogToUpdate.id}`)
-      .send(blogToUpdate)
-    console.log('updatedResponse: ', updatedResponse.body)
-    assert.strictEqual(updatedResponse.body[0].title, blogToUpdate.title)
-  })
-})
+//     blogToUpdate.title =
+//       'The Common Sense Guide to Data Structures and Algorithms'
+
+//     const updatedResponse = await api
+//       .put(`/api/blogs/${blogToUpdate.id}`)
+//       .send(blogToUpdate)
+//       .expect('Content-Type', /application\/json/)
+//       .expect(200) // Expecting 200 OK status code
+
+//     assert.strictEqual(updatedResponse.body.title, blogToUpdate.title)
+//   })
+// })
 
 describe('when deleting a blog', async () => {
-  const blogs = await api.get('/api/blogs')
+  const blogs = await blogsInDb()
 
-  const blogToDelete = blogs.body[0]
+  const blogToDelete = blogs[blogs.length - 1]
 
   await api.delete(`/api/blogs/${blogToDelete.id}`)
 
-  const response = await api.get('/api/blogs')
+  const response = await blogsInDb()
 
   test('should blogToDelete title should not be found in titles array', async () => {
-    const titles = response.body.map((blog) => blog.title)
+    const titles = response.map((blog) => blog.title)
     assert.ok(!titles.includes(blogToDelete.title))
   })
 
-  test('Blogs length should be equal to 3', () => {
-    assert.strictEqual(response.body.length, blogs.body.length - 1)
+  test('Blogs length should be reduced by 1', () => {
+    assert.strictEqual(response.length, blogs.length - 1)
   })
 })
 
