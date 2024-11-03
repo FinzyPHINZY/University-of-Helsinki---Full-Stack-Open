@@ -1,0 +1,152 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+header {
+  padding: 1rem;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  background: blue;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+nav p {
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 2rem;
+}
+
+.navuser {
+  text-transform: capitalize;
+}
+
+.navuser span {
+  color: white;
+  margin-left: 5px;
+}
+
+.login,
+.create {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login h2,
+.blogs h2,
+.create h2 {
+  margin-bottom: 1rem;
+}
+
+form {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input label {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.input input {
+  flex-grow: 1;
+  padding: 5px 1rem;
+  border-radius: 5px;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+}
+
+.btn button:hover {
+  font-size: larger;
+}
+.btn button {
+  padding: 0.5rem 3rem;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.blogs {
+  margin-top: 2rem;
+  text-align: center;
+  padding: 0 2rem;
+}
+
+.blogs ul {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.blog {
+  display: flex;
+  gap: 8px;
+  font-size: 1.3rem;
+}
+
+.blog .author {
+  text-transform: capitalize;
+  font-style: italic;
+}
+
+.user-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.logout {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: none;
+}
+
+.logout:hover {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.notification {
+  padding: 6px 20px;
+  text-align: center;
+  margin: 1rem auto;
+  font-size: 22px;
+}
+
+.false {
+  color: red;
+  border: 2px solid red;
+}
+
+.true {
+  color: green;
+  border: 2px solid green;
+}
