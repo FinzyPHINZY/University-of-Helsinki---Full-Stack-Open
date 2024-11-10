@@ -9,18 +9,27 @@
   max-width: 900px;
   margin: 0 auto;
   padding-bottom: 3rem;
+  position: relative;
 }
 
 header {
   padding: 1rem;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
   background: blue;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 90%;
+  z-index: 1000;
+  margin: 0 auto; /* Ensure the navbar is above the content */
 }
 
 nav {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 nav p {
@@ -92,6 +101,10 @@ form {
   border-radius: 5px;
 }
 
+button {
+  cursor: pointer;
+}
+
 .blogs {
   margin-top: 2rem;
   text-align: center;
@@ -149,4 +162,30 @@ form {
 .true {
   color: green;
   border: 2px solid green;
+}
+
+.hide {
+  display: none;
+}
+
+.reveal {
+  display: block;
+}
+
+.cancel-btn {
+  padding: 10px 16px;
+  font-size: 10px;
+  border-radius: 5px;
+  color: white;
+  background: red;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.form-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
 }

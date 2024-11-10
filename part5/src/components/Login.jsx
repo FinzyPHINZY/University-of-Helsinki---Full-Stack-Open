@@ -13,8 +13,10 @@ const Login = ({ fetchUser }) => {
 
     try {
       const user = { username: username, password: password };
+
       userService.login(user).then((res) => {
         fetchUser(res);
+        window.localStorage.setItem('user', JSON.stringify(res));
         setNotification(`Logged in ${res.username} successfully`);
         setNotificationStatus(true);
       });

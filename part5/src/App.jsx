@@ -10,14 +10,34 @@ import blogService from './services/blogs';
 const App = () => {
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
+  const [createBlogVisible, setCreateBlogVisible] = useState(false);
 
-  // useEffect(() => {
-  //   fetchBlogs();
-  // }, []);
+  const hideWhenVisible = { display: createBlogVisible ? 'none' : '' };
+  const showWhenVisible = { display: createBlogVisible ? '' : 'none' };
+
+  useEffect(() => {
+    const savedUserData = window.localStorage.getItem('user');
+    if (savedUserData) {
+      const userObject = JSON.parse(savedUserData);
+      setUser(userObject);
+      blogService.setToken(userObject.token); // Set the token here
+    }
+  }, []);
+
+  // Fetch blogs whenever `user` is set
+  useEffect(() => {
+    if (user) {
+      fetchBlogs();
+    }
+  }, [user]);
 
   const fetchBlogs = async () => {
-    const allBlogs = await blogService.getAll();
-    setBlogs(allBlogs);
+    try {
+      const allBlogs = await blogService.getAll();
+      setBlogs(allBlogs);
+    } catch (error) {
+      console.error('Error fetching blogs', error);
+    }
   };
 
   const addBlog = (newBlog) => {
@@ -66,3 +86,7 @@ const App = () => {
 };
 
 export default App;
+
+// if hideLogin === true, LOGIN: hidden, button: visible.
+// if hideLogin === false. LOGIN: visible, button: hidden
+//
