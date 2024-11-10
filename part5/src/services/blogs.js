@@ -23,4 +23,20 @@ const createBlog = (blog) => {
   return request;
 };
 
-export default { getAll, setToken, createBlog };
+const updateBlog = (blog) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const request = axios.put(`${baseUrl}/${blog._id}`, blog, config);
+  return request;
+};
+
+const deleteBlog = (blog) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const request = axios.delete(`${baseUrl}/${blog._id}`, config);
+  return request;
+};
+
+export default { getAll, setToken, createBlog, updateBlog, deleteBlog };

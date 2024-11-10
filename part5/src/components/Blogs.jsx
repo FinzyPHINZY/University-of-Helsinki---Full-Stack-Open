@@ -5,13 +5,13 @@ const Blogs = ({ blogs }) => {
     <div className="blogs">
       <h2>Blogs</h2>
 
-      <ul>
+      <div className="blogs-div">
         {blogs.map((blog, index) => (
-          <li key={blog._id + index}>
+          <div key={blog._id + index}>
             <Blog blog={blog} />
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

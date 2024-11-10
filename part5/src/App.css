@@ -111,7 +111,7 @@ button {
   padding: 0 2rem;
 }
 
-.blogs ul {
+.blogs .blogs-div {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -119,13 +119,27 @@ button {
 
 .blog {
   display: flex;
+  flex-direction: column;
   gap: 8px;
   font-size: 1.3rem;
+  border: 1px solid black;
+  padding: 10px 0;
 }
 
 .blog .author {
   text-transform: capitalize;
   font-style: italic;
+}
+
+.blog .heading {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.blog .body {
+  display: flex;
+  flex-direction: column;
 }
 
 .user-status {
