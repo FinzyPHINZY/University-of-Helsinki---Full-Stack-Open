@@ -1,3 +1,4 @@
+import React from 'react';
 import './App.css';
 import { useEffect, useState } from 'react';
 
@@ -11,12 +12,29 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
 
+  const isTokenExpired = (token) => {
+    try {
+      const { exp } = JSON.parse(atob(token.split('.')[1]));
+
+      return Date.now >= exp * 1000;
+    } catch (error) {
+      console.error('Invalid token error: ', error);
+      return true; // Token is expired
+    }
+  };
+
   useEffect(() => {
     const savedUserData = window.localStorage.getItem('user');
+
     if (savedUserData) {
       const userObject = JSON.parse(savedUserData);
-      setUser(userObject);
-      blogService.setToken(userObject.token); // Set the token here
+      if (!isTokenExpired(userObject.token)) {
+        setUser(userObject);
+        blogService.setToken(userObject.token);
+      } else {
+        console.log('Token expired. Logging out.');
+        handleLogout();
+      }
     }
   }, []);
 

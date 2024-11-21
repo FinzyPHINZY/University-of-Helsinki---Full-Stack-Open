@@ -1,6 +1,8 @@
+import React from 'react';
 import { useState } from 'react';
 import blogService from '../services/blogs';
 import Notification from './Notification';
+import PropTypes from 'prop-types';
 
 export const CreateBlog = ({ addBlog }) => {
   const [formData, setFormData] = useState({
@@ -105,4 +107,8 @@ export const CreateBlog = ({ addBlog }) => {
       </div>
     </div>
   );
+};
+
+CreateBlog.propTypes = {
+  addBlog: PropTypes.func,
 };

@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import BlogService from '../services/blogs.js';
 
@@ -60,6 +62,15 @@ const Blog = ({ blog }) => {
       )}
     </div>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    likes: PropTypes.number,
+    title: PropTypes.string,
+    url: PropTypes.string,
+    author: PropTypes.string,
+  }),
 };
 
 export default Blog;

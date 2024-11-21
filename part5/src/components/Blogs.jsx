@@ -1,4 +1,6 @@
+import React from 'react';
 import Blog from './Blog';
+import PropTypes from 'prop-types';
 
 const Blogs = ({ blogs }) => {
   return (
@@ -14,6 +16,18 @@ const Blogs = ({ blogs }) => {
       </div>
     </div>
   );
+};
+
+Blogs.propTypes = {
+  blogs: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string,
+      likes: PropTypes.number,
+      title: PropTypes.string,
+      url: PropTypes.string,
+      author: PropTypes.string,
+    })
+  ),
 };
 
 export default Blogs;

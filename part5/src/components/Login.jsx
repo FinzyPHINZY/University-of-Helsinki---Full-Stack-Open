@@ -1,6 +1,8 @@
+import React from 'react';
 import { useState } from 'react';
 import userService from '../services/user';
 import Notification from './Notification';
+import PropTypes from 'prop-types';
 
 const Login = ({ fetchUser }) => {
   const [username, setUsername] = useState('');
@@ -67,6 +69,10 @@ const Login = ({ fetchUser }) => {
       </form>
     </div>
   );
+};
+
+Login.propTypes = {
+  fetchUser: PropTypes.func,
 };
 
 export default Login;

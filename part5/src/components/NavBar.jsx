@@ -1,3 +1,6 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
 const NavBar = ({ user }) => {
   return (
     <header>
@@ -12,6 +15,12 @@ const NavBar = ({ user }) => {
       </nav>
     </header>
   );
+};
+
+NavBar.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string,
+  }),
 };
 
 export default NavBar;
